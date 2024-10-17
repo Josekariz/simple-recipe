@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Home = () => {
-  const [meal, setMeal] = useState(null);
+  
   const [meals, setMeals] = useState([]);
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("chicken");
@@ -34,7 +34,7 @@ const Home = () => {
     );
     const data = await response.json();
     const randomMeal = data.meals[0];
-    setMeal(randomMeal);
+    
     navigate(`/recipe/${randomMeal.idMeal}`);
   };
 
