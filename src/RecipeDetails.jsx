@@ -59,7 +59,7 @@ const RecipeDetails = () => {
           </Link>
           <button
             onClick={fetchRandomMeal}
-            className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all"
           >
             <ChefHat size={20} />
             Try Another Random Recipe
