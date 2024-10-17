@@ -2,24 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Home = () => {
-  const APP_ID = process.env.REACT_APP_EDAMAM_APP_ID;
-  const APP_KEY = process.env.REACT_APP_EDAMAM_APP_KEY;
-
-  const [recipes, setRecipes] = useState([]);
+  const [meal, setMeal] = useState(null);
+  const [meals, setMeals] = useState([]);
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("chicken");
   const navigate = useNavigate();
 
   useEffect(() => {
-    getRecipes();
+    getMeals();
   }, [query]);
 
-  const getRecipes = async () => {
+  const getMeals = async () => {
     const response = await fetch(
-      `https://api.edamam.com/search?q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`
+      `https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`
     );
     const data = await response.json();
-    setRecipes(data.hits);
+    setMeals(data.meals);
   };
 
   const updateSearch = (e) => setSearch(e.target.value);
@@ -30,20 +28,21 @@ const Home = () => {
     setSearch("");
   };
 
-  const fetchRandomRecipeAndNavigate = async () => {
+  const fetchRandomMealAndNavigate = async () => {
     const response = await fetch(
-      `https://api.edamam.com/search?q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`
+      `https://www.themealdb.com/api/json/v1/1/random.php`
     );
     const data = await response.json();
-    const randomIndex = Math.floor(Math.random() * data.hits.length);
-    navigate(`/recipe/${randomIndex}`);
+    const randomMeal = data.meals[0];
+    setMeal(randomMeal);
+    navigate(`/recipe/${randomMeal.idMeal}`);
   };
 
   return (
     <div className="bg-gray-100 min-h-screen p-4">
       <header className="flex justify-between items-center p-4 bg-white shadow-md mb-8">
         <button
-          onClick={fetchRandomRecipeAndNavigate}
+          onClick={fetchRandomMealAndNavigate}
           className="mr-2 bg-green-500 text-white p-2 rounded-md hover:bg-green-600"
         >
           Show Random Recipe
@@ -66,12 +65,12 @@ const Home = () => {
         </form>
       </header>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {recipes.map((recipe, index) => (
-          <Link to={`/recipe/${index}`} key={recipe.recipe.label}>
+        {meals && meals.map((meal) => (
+          <Link to={`/recipe/${meal.idMeal}`} key={meal.idMeal}>
             <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
-              <h2 className="text-lg font-bold text-gray-800 mb-2">{recipe.recipe.label}</h2>
-              <img src={recipe.recipe.image} alt={recipe.recipe.label} className="w-full h-40 object-cover rounded-md mb-2" />
-              <p className="text-gray-500">Calories: {recipe.recipe.calories.toFixed(2)}</p>
+              <h2 className="text-lg font-bold text-gray-800 mb-2">{meal.strMeal}</h2>
+              <img src={meal.strMealThumb} alt={meal.strMeal} className="w-full h-40 object-cover rounded-md mb-2" />
+              <p className="text-gray-500">Category: {meal.strCategory}</p>
             </div>
           </Link>
         ))}

@@ -2,31 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 const RecipeDetails = () => {
-  const APP_ID = process.env.REACT_APP_EDAMAM_APP_ID;
-  const APP_KEY = process.env.REACT_APP_EDAMAM_APP_KEY;
-
   const { recipeId } = useParams();
-  const [recipe, setRecipe] = useState(null);
+  const [meal, setMeal] = useState(null);
 
   useEffect(() => {
-    fetchRecipe(recipeId);
+    fetchMeal(recipeId);
   }, [recipeId]);
 
-  const fetchRecipe = async (id) => {
+  const fetchMeal = async (id) => {
     const response = await fetch(
-      `https://api.edamam.com/search?q=chicken&app_id=${APP_ID}&app_key=${APP_KEY}`
+      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
     );
     const data = await response.json();
-    setRecipe(data.hits[id].recipe);
+    setMeal(data.meals[0]);
   };
 
-  const fetchRandomRecipe = async () => {
+  const fetchRandomMeal = async () => {
     const response = await fetch(
-      `https://api.edamam.com/search?q=chicken&app_id=${APP_ID}&app_key=${APP_KEY}`
+      `https://www.themealdb.com/api/json/v1/1/random.php`
     );
     const data = await response.json();
-    const randomIndex = Math.floor(Math.random() * data.hits.length);
-    setRecipe(data.hits[randomIndex].recipe);
+    const randomMeal = data.meals[0];
+    setMeal(randomMeal);
   };
 
   return (
@@ -36,25 +33,26 @@ const RecipeDetails = () => {
           Back to Home
         </Link>
         <button
-          onClick={fetchRandomRecipe}
+          onClick={fetchRandomMeal}
           className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600"
         >
           Show Random Recipe
         </button>
       </div>
-      {recipe ? (
+      {meal ? (
         <div className="bg-white p-4 rounded-lg shadow-md">
-          <h1 className="text-2xl font-bold mb-2">{recipe.label}</h1>
-          <img src={recipe.image} alt={recipe.label} className="w-full h-40 object-cover rounded-md mb-2" />
-          <p className="text-gray-500">Calories: {recipe.calories.toFixed(2)}</p>
+          <h1 className="text-2xl font-bold mb-2">{meal.strMeal}</h1>
+          <img src={meal.strMealThumb} alt={meal.strMeal} className="w-full h-40 object-cover rounded-md mb-2" />
           <h3 className="font-semibold mt-4">Ingredients:</h3>
           <ul>
-            {recipe.ingredients.map((ingredient, index) => (
-              <li key={index}>{ingredient.text}</li>
+            {Object.keys(meal)
+              .filter(key => key.includes('strIngredient') && meal[key])
+              .map((ingredient, index) => (
+                <li key={index}>{meal[ingredient]}</li>
             ))}
           </ul>
-          <h3 className="font-semibold mt-4">Steps:</h3>
-          <p>{recipe.instructions || "No instructions available."}</p>
+          <h3 className="font-semibold mt-4">Instructions:</h3>
+          <p>{meal.strInstructions || "No instructions available."}</p>
         </div>
       ) : (
         <p>Loading recipe details...</p>
