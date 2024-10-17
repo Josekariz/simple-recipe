@@ -1,24 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Home = () => {
-  
   const [meals, setMeals] = useState([]);
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("chicken");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    getMeals();
-  }, [query]);
-
-  const getMeals = async () => {
+  const getMeals = useCallback(async () => {
     const response = await fetch(
       `https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`
     );
     const data = await response.json();
     setMeals(data.meals);
-  };
+  }, [query]); // Now it depends on 'query'
+
+  useEffect(() => {
+    getMeals();
+  }, [getMeals]); // Include getMeals as a dependency
 
   const updateSearch = (e) => setSearch(e.target.value);
 
