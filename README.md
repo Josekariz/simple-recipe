@@ -1,95 +1,52 @@
-Here’s the updated README with emojis added for a more engaging presentation:
+# Meal Finder App 🍽️
 
----
-
-# 🍽️ Simple Recipe App
-
-## Overview
-
-The Simple Recipe App is a web application that allows users to browse and discover various recipes. Users can view recipe details and access random recipes. The application is built using React and utilizes Tailwind CSS for styling.
+Welcome to the Meal Finder App! This application allows users to discover a variety of recipes, including the meal of the day, and provides detailed information about each recipe. 
 
 ## Features
 
-- **Browse Recipes:** 🥘 View a list of recipes rendered as cards on the home page.
-- **Recipe Details:** 📖 Click on a recipe card to view detailed information about the recipe.
-- **Random Recipe:** 🎲 Get a random recipe displayed on the details page.
-- **Back to Home:** 🔙 Navigate back to the home page from the recipe details page.
+### Home Page 🏠
 
-## Technologies Used
+- **Search for Recipes**: Users can search for recipes by keyword. 🔍
+- **Meal Categories**: Browse meals by categories (e.g., Vegetarian, Seafood, etc.). 🍲
+- **Area Filter**: Filter meals based on geographical area (e.g., Italian, Mexican, etc.). 🌍
+- **Meal of the Day**: Displays a special meal each day, retrieved from the API or stored in local storage. 🌟
+- **Random Recipe Button**: Users can click to view a random recipe, which navigates to the details page. 🎲
 
-- React ⚛️
-- Tailwind CSS 🎨
-- React Router 🛤️
+### Recipe Details Page 📖
 
-## API
+- **Recipe Information**: View detailed information about a selected recipe, including ingredients and instructions. 📋
+- **Ingredients List**: A dynamic list of ingredients with corresponding measurements. 🥗
+- **Try Another Random Recipe**: A button to fetch and display another random recipe. 🔄
 
-This application uses the **MealDB API** to fetch recipe data. The following API endpoints are utilized:
-
-### Free API Endpoints
-
-- **Search meal by name:**
-  ```
-  https://www.themealdb.com/api/json/v1/1/search.php?s={meal_name}
-  ```
-- **List all meals by first letter:**
-  ```
-  https://www.themealdb.com/api/json/v1/1/search.php?f={letter}
-  ```
-- **Lookup full meal details by ID:**
-  ```
-  https://www.themealdb.com/api/json/v1/1/lookup.php?i={meal_id}
-  ```
-- **Lookup a single random meal:**
-  ```
-  https://www.themealdb.com/api/json/v1/1/random.php
-  ```
-- **List all meal categories:**
-  ```
-  https://www.themealdb.com/api/json/v1/1/categories.php
-  ```
-
-### Test API Key
-
-You can use the test API key `"1"` during the development of your app or for educational purposes. 🛠️
-
-### Note
-
-While the API and site will always remain free at the point of access, you may need to upgrade for premium features in the future if releasing publicly. 🚀
-
-## Installation
-
-To get started with this project:
+## Installation 🚀
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/Josekariz/simple-recipe.git
-   ```
-
-2. Navigate into the project directory:
-   ```bash
    cd simple-recipe
    ```
 
-3. Install dependencies:
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-4. Start the development server:
+3. Start the application:
    ```bash
    npm start
    ```
 
-## Usage
+## Technologies Used 🛠️
 
-- Visit the home page to view a list of recipes. 🏠
-- Click on a recipe card to view detailed information. 📜
-- Use the "Get Random Recipe" button to display a random recipe on the details page. 🎉
+- React
+- CSS
+- JavaScript
+- [MealDB API](https://www.themealdb.com/api.php)
 
-## Contribution
+## License 📜
 
-Feel free to fork the repository and submit pull requests. Your contributions are welcome! 🤝
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## License
+## Contact 📬
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 📄
+For any inquiries or contributions, feel free to reach out!
