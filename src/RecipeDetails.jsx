@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, ChefHat } from 'lucide-react';
 
 const RecipeDetails = () => {
   const { recipeId } = useParams();
+  const location = useLocation();
   const [meal, setMeal] = useState(null);
   const [ingredients, setIngredients] = useState([]);
 
@@ -50,8 +51,8 @@ const RecipeDetails = () => {
     <div className="bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
-          <Link 
-            to="/" 
+          <Link
+            to={location.state?.from || '/'}
             className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft size={20} />

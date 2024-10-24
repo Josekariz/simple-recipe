@@ -1,54 +1,56 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, ChefHat, Calendar } from 'lucide-react';
 
 const Home = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [meals, setMeals] = useState([]);
   const [search, setSearch] = useState("");
-  const [query, setQuery] = useState("chicken");
   const [categories, setCategories] = useState([]);
   const [areas, setAreas] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedArea, setSelectedArea] = useState("");
   const [mealOfTheDay, setMealOfTheDay] = useState(null);
   const navigate = useNavigate();
 
-  const fetchMealOfTheDay = async () => {
-    const today = new Date().toDateString();
-    const storedMeal = localStorage.getItem('mealOfTheDay');
-    const storedDate = localStorage.getItem('mealOfTheDayDate');
-
-    if (storedMeal && storedDate === today) {
-      setMealOfTheDay(JSON.parse(storedMeal));
-    } else {
-      try {
-        const response = await fetch('https://www.themealdb.com/api/json/v1/1/random.php');
-        const data = await response.json();
-        const newMealOfTheDay = data.meals[0];
-        
-        setMealOfTheDay(newMealOfTheDay);
-        localStorage.setItem('mealOfTheDay', JSON.stringify(newMealOfTheDay));
-        localStorage.setItem('mealOfTheDayDate', today);
-      } catch (error) {
-        console.error('Error fetching meal of the day:', error);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchMealOfTheDay();
-  }, []);
+  // Get initial values from URL params
+  const query = searchParams.get('q') || '';
+  const selectedCategory = searchParams.get('category') || '';
+  const selectedArea = searchParams.get('area') || '';
 
   const getMeals = useCallback(async () => {
-    let url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`;
-    if (selectedCategory) {
-      url = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${selectedCategory}`;
-    } else if (selectedArea) {
-      url = `https://www.themealdb.com/api/json/v1/1/filter.php?a=${selectedArea}`;
+    let url;
+    try {
+      if (selectedCategory) {
+        url = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${selectedCategory}`;
+      } else if (selectedArea) {
+        url = `https://www.themealdb.com/api/json/v1/1/filter.php?a=${selectedArea}`;
+      } else if (query) {
+        url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`;
+      } else {
+        // Default search if no filters are applied
+        url = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
+      }
+      const response = await fetch(url);
+      const data = await response.json();
+
+      // If we only got basic meal info, fetch full details for each meal
+      if (selectedCategory || selectedArea) {
+        const detailedMeals = await Promise.all(
+          (data.meals || []).map(async (meal) => {
+            const detailResponse = await fetch(
+              `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`
+            );
+            const detailData = await detailResponse.json();
+            return detailData.meals[0];
+          })
+        );
+        setMeals(detailedMeals);
+      } else {
+        setMeals(data.meals || []);
+      }
+    } catch (error) {
+      console.error('Error fetching meals:', error);
+      setMeals([]);
     }
-    const response = await fetch(url);
-    const data = await response.json();
-    setMeals(data.meals || []);
   }, [query, selectedCategory, selectedArea]);
 
   useEffect(() => {
@@ -74,24 +76,43 @@ const Home = () => {
 
   const updateSearch = (e) => setSearch(e.target.value);
 
+
   const getSearch = (e) => {
     e.preventDefault();
-    setQuery(search);
-    setSelectedCategory("");
-    setSelectedArea("");
+    const newParams = new URLSearchParams();
+    if (search) {
+      newParams.set('q', search);
+      newParams.delete('category');
+      newParams.delete('area');
+    }
+    setSearchParams(newParams);
     setSearch("");
   };
 
   const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-    setSelectedArea("");
-    setQuery("");
+    const category = e.target.value;
+    const newParams = new URLSearchParams(searchParams);
+    if (category) {
+      newParams.set('category', category);
+      newParams.delete('q');
+      newParams.delete('area');
+    } else {
+      newParams.delete('category');
+    }
+    setSearchParams(newParams);
   };
 
   const handleAreaChange = (e) => {
-    setSelectedArea(e.target.value);
-    setSelectedCategory("");
-    setQuery("");
+    const area = e.target.value;
+    const newParams = new URLSearchParams(searchParams);
+    if (area) {
+      newParams.set('area', area);
+      newParams.delete('q');
+      newParams.delete('category');
+    } else {
+      newParams.delete('area');
+    }
+    setSearchParams(newParams);
   };
 
   const fetchRandomMealAndNavigate = async () => {
@@ -208,7 +229,11 @@ const Home = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {meals && meals.map((meal) => (
-            <Link to={`/recipe/${meal.idMeal}`} key={meal.idMeal}>
+            <Link
+              to={`/recipe/${meal.idMeal}`}
+              key={meal.idMeal}
+              state={{ from: `${window.location.pathname}${window.location.search}` }}
+            >
               <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
                 <div className="relative h-48">
                   <img 
