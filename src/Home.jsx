@@ -10,7 +10,31 @@ const Home = () => {
   const [areas, setAreas] = useState([]);
   const [mealOfTheDay, setMealOfTheDay] = useState(null);
   const navigate = useNavigate();
+  const fetchMealOfTheDay = async () => {
+    const today = new Date().toDateString();
+    const storedMeal = localStorage.getItem('mealOfTheDay');
+    const storedDate = localStorage.getItem('mealOfTheDayDate');
 
+    if (storedMeal && storedDate === today) {
+      setMealOfTheDay(JSON.parse(storedMeal));
+    } else {
+      try {
+        const response = await fetch('https://www.themealdb.com/api/json/v1/1/random.php');
+        const data = await response.json();
+        const newMealOfTheDay = data.meals[0];
+
+        setMealOfTheDay(newMealOfTheDay);
+        localStorage.setItem('mealOfTheDay', JSON.stringify(newMealOfTheDay));
+        localStorage.setItem('mealOfTheDayDate', today);
+      } catch (error) {
+        console.error('Error fetching meal of the day:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchMealOfTheDay();
+  }, []);
   // Get initial values from URL params
   const query = searchParams.get('q') || '';
   const selectedCategory = searchParams.get('category') || '';
