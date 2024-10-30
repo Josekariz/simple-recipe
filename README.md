@@ -2,6 +2,9 @@
 
 Welcome to the Meal Finder App! This application allows users to discover a variety of recipes, including the meal of the day, and provides detailed information about each recipe. 
 
+![image](https://github.com/user-attachments/assets/37d80af6-060a-4352-819d-ba9f76326ccc)
+
+
 ## Features
 
 ### Home Page 🏠
